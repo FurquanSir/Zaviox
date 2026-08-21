@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Furquan | Heavy Enterprise Portfolio</title>
+  
+  <!-- Font Awesome Icons & GSAP Animation Suite -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+  <style>
+    /* CSS Variables for Dark/Light Mode */
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111625;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --text-main: #ffffff;
+      --text-sub: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --accent: #ff5722;
+      --accent-hover: #e64a19;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(0, 0, 0, 0.03);
+      --text-main: #0f172a;
+      --text-sub: #475569;
+      --border-color: rgba(0, 0, 0, 0.1);
+      --accent: #ff5722;
+      --accent-hover: #e64a19;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Custom Cursor Follower */
+    .cursor-dot, .cursor-ring {
+      pointer-events: none;
+      position: fixed;
+      top: 0; left: 0;
+      border-radius: 50%;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease-out;
+    }
+    .cursor-dot { width: 8px; height: 8px; background-color: var(--accent); }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 2px solid var(--accent);
+      transition: width 0.2s, height 0.2s, top 0.1s, left 0.1s;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+      background: var(--bg-secondary);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 8%;
+      height: 75px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: 1.5px;
+    }
+    .logo i { color: var(--accent); margin-right: 10px; }
+
+    .nav-links { display: flex; list-style: none; align-items: center; }
+    .nav-links li { margin: 0 5px; }
+
+    .nav-tab {
+      color: var(--text-sub);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .nav-tab:hover, .nav-tab.active {
+      color: var(--accent);
+      background: rgba(255, 87, 34, 0.1);
+    }
+
+    .theme-toggle-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .btn-contact {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: #fff !important;
+      padding: 10px 22px;
+      font-weight: 700 !important;
+      border-radius: 4px;
+      text-transform: uppercase;
+      font-size: 12px !important;
+      letter-spacing: 1px;
+      margin-left: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+    }
+
+    /* Live Animated Canvas */
+    #bg-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .tab-content {
+      display: none;
+      position: relative;
+      z-index: 2;
+    }
+    .tab-content.active { display: block; }
+
+    /* Hero Section */
+    .hero {
+      min-height: calc(100vh - 75px);
+      display: flex;
+      align-items: center;
+      padding: 60px 8%;
+    }
+    .hero-title {
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 1.1;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .hero-title span { color: var(--text-main); display: block; }
+    .hero-description { color: var(--text-sub); font-size: 18px; max-width: 600px; margin-bottom: 30px; }
+
+    /* Moving Skill Marquee */
+    .marquee-container {
+      overflow: hidden;
+      white-space: nowrap;
+      background: var(--bg-secondary);
+      padding: 20px 0;
+      border-y: 1px solid var(--border-color);
+      margin: 40px 0;
+    }
+    .marquee-content {
+      display: inline-block;
+      animation: marquee 20s linear infinite;
+    }
+    .marquee-item {
+      display: inline-block;
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0 40px;
+      color: var(--accent);
+      letter-spacing: 2px;
+    }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* Live Stat Counters */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      text-align: center;
+      padding: 40px 8%;
+      background: var(--bg-card);
+      border-radius: 8px;
+      margin: 0 8% 60px 8%;
+      border: 1px solid var(--border-color);
+    }
+    .stat-card h2 { font-size: 48px; color: var(--accent); }
+    .stat-card p { color: var(--text-sub); font-size: 14px; text-transform: uppercase; }
+
+    /* Common Layouts */
+    .section-container { padding: 60px 8%; }
+    .section-title { font-size: 36px; font-weight: 900; color: var(--text-main); text-transform: uppercase; margin-bottom: 30px; }
+    .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      cursor: pointer;
+    }
+    .card:hover { transform: translateY(-8px); border-color: var(--accent); }
+    .card-img { width: 100%; height: 220px; object-fit: cover; }
+    .card-body { padding: 25px; }
+    .card-body h3 { color: var(--text-main); margin-bottom: 10px; text-transform: uppercase; }
+    .card-body p { color: var(--text-sub); font-size: 14px; }
+
+    /* Interactive Estimator */
+    .estimator-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin-top: 30px;
+    }
+    .option-group { margin-bottom: 15px; }
+    .option-group label { display: block; color: var(--text-main); margin-bottom: 5px; }
+    .option-group select {
+      width: 100%; padding: 10px; background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 4px;
+    }
+    .estimate-total { font-size: 24px; font-weight: 800; color: var(--accent); margin-top: 20px; }
+
+    /* Modal Case Study */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 40px; border-radius: 8px; max-width: 600px; width: 90%; color: var(--text-main);
+    }
+    .close-modal { float: right; font-size: 24px; cursor: pointer; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- Custom Cursor Elements -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- Live Animated Particle Canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Main Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo"><i class="fa-solid fa-layer-group"></i> Vextor</div>
+    <ul class="nav-links">
+      <li><a class="nav-tab active" onclick="switchTab('home')">Home</a></li>
+      <li><a class="nav-tab" onclick="switchTab('about')">About</a></li>
+      <li><a class="nav-tab" onclick="switchTab('projects')">Projects</a></li>
+      <li><a class="nav-tab" onclick="switchTab('services')">Services</a></li>
+      <li><a class="nav-tab" onclick="switchTab('contact')">Contact</a></li>
+      <li><button class="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button></li>
+      <li><a class="btn-contact" onclick="switchTab('contact')">Get in Touch</a></li>
+    </ul>
+  </nav>
+
+  <!-- HOME TAB CONTENT -->
+  <div id="home" class="tab-content active">
+    <header class="hero">
+      <div class="hero-content">
+        <h1 class="hero-title">WEBSITE <span>DEVELOPMENT</span></h1>
+        <p class="hero-description">Architecting high-performance digital platforms, WebGL experiences, and scalable enterprise web solutions for modern brands.</p>
+        <a class="btn-contact" onclick="switchTab('projects')">Explore Work</a>
+      </div>
+    </header>
+
+    <!-- Moving Skill Marquee -->
+    <div class="marquee-container">
+      <div class="marquee-content">
+        <span class="marquee-item">REACT.JS</span>
+        <span class="marquee-item">NEXT.JS</span>
+        <span class="marquee-item">TYPESCRIPT</span>
+        <span class="marquee-item">PYTHON</span>
+        <span class="marquee-item">THREE.JS / WEBGL</span>
+        <span class="marquee-item">NODE.JS</span>
+        <span class="marquee-item">REACT.JS</span>
+        <span class="marquee-item">NEXT.JS</span>
+        <span class="marquee-item">TYPESCRIPT</span>
+        <span class="marquee-item">PYTHON</span>
+      </div>
+    </div>
+
+    <!-- Live Animated Counter Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h2 class="counter" data-target="50">0</h2>
+        <p>Projects Completed</p>
+      </div>
+      <div class="stat-card">
+        <h2 class="counter" data-target="99">0</h2>
+        <p>% Satisfaction Rate</p>
+      </div>
+      <div class="stat-card">
+        <h2 class="counter" data-target="5">0</h2>
+        <p>Years Experience</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT TAB CONTENT -->
+  <div id="about" class="tab-content">
+    <div class="section-container">
+      <h2 class="section-title">About Vextor</h2>
+      <p style="color: var(--text-sub); line-height: 1.8; max-width: 800px; font-size: 16px;">
+        Vextor is an elite web architecture studio spearheaded by Furquan, a Lead Full-Stack Engineer and UI Architect dedicated to engineering high-throughput, enterprise-grade digital systems. We bridge the gap between complex backend infrastructure and pixel-perfect interactive visuals.
+
+At Vextor, Furquan converts ambitious vision into scalable digital assets. By combining distributed microservice APIs with fluid WebGL graphics and hardware-accelerated animations, every system built under the Vextor umbrella delivers uncompromising speed, security, and visual density.
+
+Whether architecting high-load web applications, building custom design systems, or engineering immersive dynamic interfaces, Furquan ensures that Vextor platforms remain robust, future-proof, and designed to scale seamlessly.
+      </p>
+    </div>
+  </div>
+
+  <!-- PROJECTS TAB CONTENT -->
+  <div id="projects" class="tab-content">
+    <div class="section-container">
+      <h2 class="section-title">Case Studies</h2>
+      <div class="grid-container">
+        <div class="card" onclick="openModal('Enterprise Dashboard', 'Full-scale cloud metrics platform with microservices infrastructure.')">
+          <img class="card-img" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80">
+          <div class="card-body">
+            <h3>Cloud Analytics Portal</h3>
+            <p>Click to open deep case study preview.</p>
+          </div>
+        </div>
+        <div class="card" onclick="openModal('E-Commerce Engine', 'High-throughput storefront processing 10k+ daily transactions.')">
+          <img class="card-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80">
+          <div class="card-body">
+            <h3>Enterprise E-Commerce</h3>
+            <p>Click to open deep case study preview.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES TAB CONTENT -->
+  <div id="services" class="tab-content">
+    <div class="section-container">
+      <h2 class="section-title">Services & Estimator</h2>
+      <div class="grid-container">
+        <div class="card">
+          <div class="card-body">
+            <h3>Full-Stack Systems</h3>
+            <p>End-to-end web apps built for performance and security.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h3>Interactive UI/UX</h3>
+            <p>3D visuals, micro-interactions, and custom animated interfaces.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Project Estimator Tool -->
+      <div class="estimator-box">
+        <h3>Project Scope Estimator</h3>
+        <div class="option-group" style="margin-top: 15px;">
+          <label>Project Type</label>
+          <select id="typeSelect" onchange="calculateEstimate()">
+            <option value="1000">Landing Page ($1,000)</option>
+            <option value="3000">Web Application ($3,000)</option>
+            <option value="5000">Enterprise Platform ($5,000)</option>
+          </select>
+        </div>
+        <div class="option-group">
+          <label>Add 3D / Custom Animation Suite</label>
+          <select id="animSelect" onchange="calculateEstimate()">
+            <option value="0">Standard UI ($0)</option>
+            <option value="1500">Advanced GSAP & 3D WebGL (+$1,500)</option>
+          </select>
+        </div>
+        <div class="estimate-total">Estimated Total: $<span id="totalPrice">1000</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT TAB CONTENT -->
+  <div id="contact" class="tab-content">
+    <div class="section-container">
+      <h2 class="section-title">Initiate Contact</h2>
+      <form style="max-width: 600px;" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+        <input type="text" placeholder="Your Name" required style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-main); border-radius:4px;">
+        <input type="email" placeholder="Your Email" required style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-main); border-radius:4px;">
+        <textarea rows="5" placeholder="Project Details" required style="width:100%; padding:12px; margin-bottom:15px; background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-main); border-radius:4px;"></textarea>
+        <button type="submit" class="btn-contact" style="border:none;">Send Message</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Interactive Case Study Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <h2 id="modalTitle" style="color:var(--accent); margin-bottom:15px;"></h2>
+      <p id="modalDesc" style="color:var(--text-sub); line-height:1.6;"></p>
+    </div>
+  </div>
+
+  <script>
+    // Tab System
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+      
+      const target = document.getElementById(tabId);
+      if(target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        if(tab.textContent.toLowerCase() === tabId) tab.classList.add('active');
+      });
+      window.scrollTo(0,0);
+    }
+
+    // Custom Cursor Motion
+    const dot = document.querySelector('.cursor-dot');
+    const ring = document.querySelector('.cursor-ring');
+    window.addEventListener('mousemove', (e) => {
+      dot.style.left = `${e.clientX}px`;
+      dot.style.top = `${e.clientY}px`;
+      ring.style.left = `${e.clientX}px`;
+      ring.style.top = `${e.clientY}px`;
+    });
+
+    // Dark/Light Mode Switcher
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      if(current === 'light') {
+        document.body.removeAttribute('data-theme');
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+      }
+    }
+
+    // Interactive Project Estimator Calculation
+    function calculateEstimate() {
+      const base = parseInt(document.getElementById('typeSelect').value);
+      const anim = parseInt(document.getElementById('animSelect').value);
+      document.getElementById('totalPrice').innerText = base + anim;
+    }
+
+    // Case Study Modal System
+    function openModal(title, desc) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalDesc').innerText = desc;
+      document.getElementById('modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // Animated Counter Script
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+      const updateCount = () => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText;
+        const inc = target / 100;
+        if (count < target) {
+          counter.innerText = Math.ceil(count + inc);
+          setTimeout(updateCount, 30);
+        } else {
+          counter.innerText = target + '+';
+        }
+      };
+      updateCount();
+    });
+
+    // Particle Canvas Animation
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles;
+
+    function initCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+      particles = [];
+      for (let i = 0; i < 50; i++) {
+        particles.push({
+          x: Math.random() * width, y: Math.random() * height,
+          radius: Math.random() * 2 + 1,
+          vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4,
+          alpha: Math.random() * 0.4 + 0.1
+        });
+      }
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 87, 34, ${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    window.addEventListener('resize', initCanvas);
+    initCanvas();
+    animateParticles();
+  </script>
+</body>
+</html>
