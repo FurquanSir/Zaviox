@@ -250,6 +250,46 @@
       background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 40px; border-radius: 8px; max-width: 600px; width: 90%; color: var(--text-main);
     }
     .close-modal { float: right; font-size: 24px; cursor: pointer; color: var(--accent); }
+
+    /* Zaviox authentication controls */
+    .auth-nav { display: flex; align-items: center; gap: 8px; margin-left: 8px; }
+    .auth-btn { border: 1px solid var(--border-color); border-radius: 6px; padding: 10px 14px; font-weight: 700; cursor: pointer; transition: .2s; white-space: nowrap; }
+    .auth-btn-outline { background: transparent; color: var(--text-main); }
+    .auth-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+    .auth-btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-hover)); color: #fff; border-color: transparent; }
+    .auth-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(255,87,34,.25); }
+    .user-chip { display: none; align-items: center; gap: 8px; color: var(--text-main); font-size: 13px; max-width: 190px; }
+    .user-avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,87,34,.15); color: var(--accent); overflow: hidden; font-weight: 800; flex-shrink: 0; }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px; }
+    .auth-modal { display: none; position: fixed; inset: 0; z-index: 12000; background: rgba(2,6,15,.78); backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 20px; }
+    .auth-modal.active { display: flex; }
+    .auth-card { width: min(100%, 440px); background: var(--bg-secondary); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 18px; padding: 30px; box-shadow: 0 25px 90px rgba(0,0,0,.4); position: relative; }
+    .auth-brand { color: var(--accent); font-weight: 900; letter-spacing: 2px; font-size: 13px; margin-bottom: 16px; }
+    .auth-card h2 { font-size: 29px; margin-bottom: 8px; }
+    .auth-subtitle { color: var(--text-sub); line-height: 1.5; font-size: 14px; margin-bottom: 22px; }
+    .auth-close { position: absolute; right: 17px; top: 13px; border: 0; background: transparent; color: var(--text-sub); font-size: 27px; cursor: pointer; }
+    .auth-field { display: block; margin-bottom: 14px; }
+    .auth-field span { display: block; color: var(--text-sub); font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+    .auth-field input { width: 100%; padding: 13px 14px; border-radius: 8px; border: 1px solid var(--border-color); outline: none; background: var(--bg-primary); color: var(--text-main); }
+    .auth-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,87,34,.12); }
+    .auth-submit, .google-btn { width: 100%; padding: 13px 14px; border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 5px; }
+    .auth-submit { border: 0; color: #fff; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); }
+    .google-btn { border: 1px solid var(--border-color); color: var(--text-main); background: var(--bg-card); display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .google-btn:hover { border-color: var(--accent); }
+    .auth-divider { display: flex; align-items: center; gap: 12px; color: var(--text-sub); font-size: 12px; margin: 16px 0; }
+    .auth-divider:before, .auth-divider:after { content: ''; height: 1px; flex: 1; background: var(--border-color); }
+    .auth-switch { color: var(--text-sub); text-align: center; font-size: 13px; margin-top: 18px; }
+    .auth-switch button, .forgot-btn { border: 0; background: transparent; color: var(--accent); cursor: pointer; font-weight: 800; }
+    .forgot-row { text-align: right; margin: -5px 0 12px; font-size: 12px; }
+    .auth-message { display: none; padding: 10px 12px; border-radius: 7px; margin: 0 0 14px; font-size: 13px; line-height: 1.45; }
+    .auth-message.show { display: block; }
+    .auth-message.error { color: #fecaca; background: rgba(220,38,38,.13); border: 1px solid rgba(220,38,38,.3); }
+    .auth-message.success { color: #bbf7d0; background: rgba(22,163,74,.13); border: 1px solid rgba(22,163,74,.3); }
+    .auth-note { color: var(--text-sub); font-size: 11px; line-height: 1.5; text-align: center; margin-top: 14px; }
+    @media (max-width: 1100px) { .navbar { padding: 0 4%; } .nav-tab { padding: 8px 9px; } .nav-links li { margin: 0 2px; } .auth-btn { padding: 9px 10px; } }
+    @media (max-width: 820px) { .navbar { height: auto; min-height: 75px; flex-wrap: wrap; gap: 10px; padding: 14px 5%; } .nav-links { flex-wrap: wrap; justify-content: center; gap: 5px; } .nav-links li { margin: 0; } .user-email { max-width: 95px; } .hero-title { font-size: clamp(38px, 8vw, 64px); } }
+    @media (max-width: 480px) { .auth-card { padding: 25px 20px; } .nav-tab { font-size: 12px; padding: 7px; } .auth-nav { margin-left: 0; } .user-chip { max-width: 125px; } }
   </style>
 </head>
 <body>
@@ -270,8 +310,14 @@
       <li><a class="nav-tab" onclick="switchTab('projects')">Projects</a></li>
       <li><a class="nav-tab" onclick="switchTab('services')">Services</a></li>
       <li><a class="nav-tab" onclick="switchTab('contact')">Contact</a></li>
-      <li><button class="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon"></i></button></li>
+      <li><button class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme"><i class="fa-solid fa-moon"></i></button></li>
       <li><a class="btn-contact" onclick="switchTab('contact')">Get in Touch</a></li>
+      <li class="auth-nav" id="authNav">
+        <button class="auth-btn auth-btn-outline" id="signInNavBtn" type="button" onclick="openAuth('signin')">Sign In</button>
+        <button class="auth-btn auth-btn-primary" id="signUpNavBtn" type="button" onclick="openAuth('signup')">Sign Up</button>
+        <span class="user-chip" id="userChip"><span class="user-avatar" id="userAvatar">Z</span><span class="user-email" id="userEmail"></span></span>
+        <button class="auth-btn auth-btn-outline" id="signOutNavBtn" type="button" onclick="signOutUser()" style="display:none">Sign Out</button>
+      </li>
     </ul>
   </nav>
 
@@ -410,6 +456,28 @@ Whether architecting high-load web applications, building custom design systems,
     </div>
   </div>
 
+  <!-- Zaviox Sign In / Sign Up Modal -->
+  <div id="authModal" class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle" onclick="if(event.target===this)closeAuth()">
+    <div class="auth-card">
+      <button class="auth-close" type="button" aria-label="Close authentication" onclick="closeAuth()">&times;</button>
+      <div class="auth-brand"><i class="fa-solid fa-layer-group"></i> ZAVIOX ACCOUNT</div>
+      <h2 id="authTitle">Welcome back</h2>
+      <p class="auth-subtitle" id="authSubtitle">Sign in to continue to your Zaviox experience.</p>
+      <div id="authMessage" class="auth-message" role="status" aria-live="polite"></div>
+      <form id="authForm">
+        <label class="auth-field" id="displayNameField" style="display:none"><span>YOUR NAME</span><input id="authName" type="text" autocomplete="name" placeholder="Enter your name"></label>
+        <label class="auth-field"><span>EMAIL ADDRESS</span><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+        <label class="auth-field"><span>PASSWORD</span><input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters" minlength="6" required></label>
+        <div class="forgot-row" id="forgotRow"><button class="forgot-btn" type="button" onclick="resetPassword()">Forgot password?</button></div>
+        <button class="auth-submit" id="authSubmitBtn" type="submit">Sign In</button>
+      </form>
+      <div class="auth-divider">OR CONTINUE WITH</div>
+      <button class="google-btn" id="googleSignInBtn" type="button"><i class="fa-brands fa-google"></i> Continue with Google</button>
+      <p class="auth-switch" id="authSwitchText">New to Zaviox? <button type="button" onclick="openAuth('signup')">Create an account</button></p>
+      <p class="auth-note">Your account is secured by Firebase Authentication. Never share your password with anyone.</p>
+    </div>
+  </div>
+
   <!-- Interactive Case Study Modal -->
   <div id="modal" class="modal">
     <div class="modal-content">
@@ -420,6 +488,33 @@ Whether architecting high-load web applications, building custom design systems,
   </div>
 
   <script>
+    // Authentication modal UI helpers (Firebase actions are in the module script below).
+    let authMode = 'signin';
+    function openAuth(mode = 'signin') {
+      authMode = mode;
+      const isSignup = mode === 'signup';
+      document.getElementById('authTitle').textContent = isSignup ? 'Create your account' : 'Welcome back';
+      document.getElementById('authSubtitle').textContent = isSignup ? 'Join Zaviox and get started with your account.' : 'Sign in to continue to your Zaviox experience.';
+      document.getElementById('displayNameField').style.display = isSignup ? 'block' : 'none';
+      document.getElementById('authName').required = isSignup;
+      document.getElementById('authPassword').autocomplete = isSignup ? 'new-password' : 'current-password';
+      document.getElementById('authSubmitBtn').textContent = isSignup ? 'Create Account' : 'Sign In';
+      document.getElementById('forgotRow').style.display = isSignup ? 'none' : 'block';
+      document.getElementById('authSwitchText').innerHTML = isSignup
+        ? `Already have an account? <button type="button" onclick="openAuth('signin')">Sign in</button>`
+        : `New to Zaviox? <button type="button" onclick="openAuth('signup')">Create an account</button>`;
+      showAuthMessage('');
+      document.getElementById('authModal').classList.add('active');
+      setTimeout(() => document.getElementById('authEmail').focus(), 80);
+    }
+    function closeAuth() { document.getElementById('authModal').classList.remove('active'); }
+    function showAuthMessage(message, type = 'error') {
+      const box = document.getElementById('authMessage');
+      box.textContent = message;
+      box.className = 'auth-message' + (message ? ' show ' + type : '');
+    }
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') { closeAuth(); closeModal(); } });
+
     // Tab System
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -524,5 +619,182 @@ Whether architecting high-load web applications, building custom design systems,
     initCanvas();
     animateParticles();
   </script>
+
+  <!--
+    FIREBASE SETUP REQUIRED BEFORE AUTHENTICATION CAN WORK:
+    1. Create a project at https://console.firebase.google.com/
+    2. Add a Web App and copy its Firebase config into firebaseConfig below.
+    3. Authentication > Sign-in method: enable Email/Password and Google.
+    4. Authentication > Settings > Authorized domains: add zaviox.vercel.app.
+    5. Deploy this updated HTML to Vercel over HTTPS.
+    Firebase web config is public by design; protect data with Firebase Security Rules.
+  -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+    import {
+      getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence,
+      createUserWithEmailAndPassword, signInWithEmailAndPassword,
+      signInWithPopup, signOut, onAuthStateChanged, updateProfile,
+      sendPasswordResetEmail
+    } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+
+    // Replace every placeholder below with the config from Firebase Console > Project settings > Your apps.
+    const firebaseConfig = {
+      apiKey: 'PASTE_YOUR_FIREBASE_API_KEY_HERE',
+      authDomain: 'PASTE_YOUR_PROJECT_ID_HERE.firebaseapp.com',
+      projectId: 'PASTE_YOUR_PROJECT_ID_HERE',
+      storageBucket: 'PASTE_YOUR_PROJECT_ID_HERE.appspot.com',
+      messagingSenderId: 'PASTE_YOUR_MESSAGING_SENDER_ID_HERE',
+      appId: 'PASTE_YOUR_FIREBASE_APP_ID_HERE'
+    };
+
+    const configReady = firebaseConfig.apiKey !== 'PASTE_YOUR_FIREBASE_API_KEY_HERE' &&
+      firebaseConfig.projectId !== 'PASTE_YOUR_PROJECT_ID_HERE' &&
+      firebaseConfig.appId !== 'PASTE_YOUR_FIREBASE_APP_ID_HERE';
+
+    const form = document.getElementById('authForm');
+    const googleButton = document.getElementById('googleSignInBtn');
+    let auth = null;
+    let googleProvider = null;
+
+    function friendlyAuthError(error) {
+      const messages = {
+        'auth/invalid-email': 'Please enter a valid email address.',
+        'auth/missing-password': 'Please enter your password.',
+        'auth/weak-password': 'Choose a stronger password with at least 6 characters.',
+        'auth/email-already-in-use': 'An account already exists for this email. Try signing in.',
+        'auth/invalid-credential': 'Email or password is incorrect. Please try again.',
+        'auth/user-not-found': 'No account was found for this email. Create an account first.',
+        'auth/wrong-password': 'Email or password is incorrect. Please try again.',
+        'auth/popup-closed-by-user': 'The Google sign-in window was closed before completion.',
+        'auth/popup-blocked': 'Your browser blocked the Google popup. Allow popups and try again.',
+        'auth/unauthorized-domain': 'This domain is not authorized in Firebase. Add zaviox.vercel.app under Authentication settings.',
+        'auth/network-request-failed': 'Network error. Check your internet connection and try again.'
+      };
+      return messages[error.code] || error.message || 'Something went wrong. Please try again.';
+    }
+
+    function setBusy(busy) {
+      const submit = document.getElementById('authSubmitBtn');
+      submit.disabled = busy;
+      googleButton.disabled = busy;
+      submit.style.opacity = busy ? '.65' : '1';
+      googleButton.style.opacity = busy ? '.65' : '1';
+      submit.style.cursor = busy ? 'wait' : 'pointer';
+    }
+
+    function updateNav(user) {
+      const signedIn = Boolean(user);
+      document.getElementById('signInNavBtn').style.display = signedIn ? 'none' : 'inline-block';
+      document.getElementById('signUpNavBtn').style.display = signedIn ? 'none' : 'inline-block';
+      document.getElementById('userChip').style.display = signedIn ? 'flex' : 'none';
+      document.getElementById('signOutNavBtn').style.display = signedIn ? 'inline-block' : 'none';
+      document.getElementById('userEmail').textContent = user ? (user.displayName || user.email || 'Account') : '';
+      const avatar = document.getElementById('userAvatar');
+      avatar.innerHTML = '';
+      if (user && user.photoURL) {
+        const img = document.createElement('img');
+        img.src = user.photoURL;
+        img.alt = 'Profile';
+        avatar.appendChild(img);
+      } else {
+        avatar.textContent = user ? (user.displayName || user.email || 'Z').charAt(0).toUpperCase() : 'Z';
+      }
+    }
+
+    if (!configReady) {
+      showAuthMessage('Setup needed: add your Firebase web app config in the code before using sign in.', 'error');
+      // Keep the site usable, but explain setup when an authentication action is attempted.
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        showAuthMessage('Firebase is not configured yet. Follow the setup comments in this HTML file and paste your Firebase web config.', 'error');
+      });
+      googleButton.addEventListener('click', () => showAuthMessage('Firebase is not configured yet. Paste your Firebase web config first.', 'error'));
+      window.resetPassword = () => showAuthMessage('Firebase is not configured yet. Paste your Firebase web config first.', 'error');
+      window.signOutUser = () => showAuthMessage('Firebase is not configured yet, so there is no authenticated session to sign out.', 'error');
+      updateNav(null);
+    } else {
+      try {
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        googleProvider = new GoogleAuthProvider();
+        googleProvider.setCustomParameters({ prompt: 'select_account' });
+        await setPersistence(auth, browserLocalPersistence);
+
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const email = document.getElementById('authEmail').value.trim();
+          const password = document.getElementById('authPassword').value;
+          setBusy(true);
+          showAuthMessage('');
+          try {
+            if (authMode === 'signup') {
+              const name = document.getElementById('authName').value.trim();
+              const credential = await createUserWithEmailAndPassword(auth, email, password);
+              if (name) await updateProfile(credential.user, { displayName: name });
+              showAuthMessage('Account created successfully. Welcome to Zaviox!', 'success');
+            } else {
+              await signInWithEmailAndPassword(auth, email, password);
+            }
+            setTimeout(closeAuth, 650);
+          } catch (error) {
+            showAuthMessage(friendlyAuthError(error), 'error');
+          } finally {
+            setBusy(false);
+          }
+        });
+
+        googleButton.addEventListener('click', async () => {
+          setBusy(true);
+          showAuthMessage('');
+          try {
+            await signInWithPopup(auth, googleProvider);
+            closeAuth();
+          } catch (error) {
+            showAuthMessage(friendlyAuthError(error), 'error');
+          } finally {
+            setBusy(false);
+          }
+        });
+
+        window.resetPassword = async function () {
+          const email = document.getElementById('authEmail').value.trim();
+          if (!email) {
+            showAuthMessage('Enter your email address first, then select Forgot password.', 'error');
+            document.getElementById('authEmail').focus();
+            return;
+          }
+          try {
+            await sendPasswordResetEmail(auth, email);
+            showAuthMessage('Password reset email sent. Check your inbox and spam folder.', 'success');
+          } catch (error) {
+            showAuthMessage(friendlyAuthError(error), 'error');
+          }
+        };
+
+        window.signOutUser = async function () {
+          try {
+            await signOut(auth);
+            showAuthMessage('You have signed out successfully.', 'success');
+          } catch (error) {
+            openAuth('signin');
+            showAuthMessage(friendlyAuthError(error), 'error');
+          }
+        };
+
+        onAuthStateChanged(auth, (user) => updateNav(user));
+      } catch (error) {
+        console.error('Firebase initialization error:', error);
+        googleButton.addEventListener('click', () => showAuthMessage('Firebase setup error. Check your Firebase config and browser console.', 'error'));
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          showAuthMessage('Firebase setup error. Check your Firebase config and browser console.', 'error');
+        });
+        window.signOutUser = () => {};
+        updateNav(null);
+      }
+    }
+  </script>
+
 </body>
 </html>
